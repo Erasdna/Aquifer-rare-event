@@ -11,17 +11,18 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.getcwd() + "/src/"))
 
-from PDE import PDE_solve
+from PDE_simulator import PDE
 
 n = 7
 steps = 2**np.arange(0,n)
 N0 = 10
 
+solver = PDE()
 points = np.array([[-1.2,1.1],[-2.5,2.5],[-3.0,4.0]],dtype=float)
 res = np.zeros((len(steps),len(points)))
 for i,s in enumerate(steps):
     print(s)
-    u=PDE_solve(N=N0*s,dof=100,points=points)
+    u=solver.solve(N=N0*s,resolution=100,points=points)
     for j,p in enumerate(points):
         res[i,j]=u(p[0],p[1])
     

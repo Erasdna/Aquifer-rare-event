@@ -11,18 +11,19 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.getcwd() + "/src/"))
 
-from PDE import PDE_solve
+from PDE_simulator import PDE
 
 steps = np.array([50,100,150,200,250,300,350,400])
 #steps = np.array([50,100,150])
 dof = np.zeros_like(steps)
 N = 100
 
+solver = PDE()
 points = np.array([[-1.2,1.1],[-2.5,2.5],[-3.0,4.0]],dtype=float)
 res = np.zeros((len(steps),len(points)))
 for i,s in enumerate(steps):
     print(s)
-    u=PDE_solve(N=N,dof=s,points=points)
+    u=solver.solve(N=N,resolution=s,points=points)
     dof[i] = len(u.vector())
     for j,p in enumerate(points):
         res[i,j]=u(p[0],p[1])

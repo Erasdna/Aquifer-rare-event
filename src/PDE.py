@@ -8,12 +8,13 @@ def make_mesh(outer_radius,mesh_size):
     domain = outer
     return generate_mesh(domain,mesh_size)
 
-def PDE_solve(N,sigma=0.25,R=1.0,T=10.0, Q=-7.0, cutoff = 20.0,dof=200, points=[[1.2,1.1],[2.5,2.5],[3.0,4.0]], verbose=True):
+def PDE_solve(N,sigma=0.25,R=1.0,T=10.0, Q=-7.0, cutoff = 20.0,dof=200, points=[[1.2,1.1],[2.5,2.5],[3.0,4.0]], verbose=True, all_timesteps=False):
     dt=T/N
     
     mesh = make_mesh(cutoff,dof)
 
     V = FunctionSpace(mesh,"P",1)
+    gradV = VectorFunctionSpace(mesh,"P",1)
     #Should only be called on the boundary
     u_boundary = Expression('x[0]*x[0] + x[1]*x[1]<=R*R ? 1.0 : 0.0',R=R,degree=2)
 
@@ -33,16 +34,25 @@ def PDE_solve(N,sigma=0.25,R=1.0,T=10.0, Q=-7.0, cutoff = 20.0,dof=200, points=[
     F = u*v*dx - IV*v*dx - dt*dot(flow,grad(u))*v*dx + dt*(sigma**2/2)*dot(grad(u),grad(v))*dx
     a, L = lhs(F),rhs(F)
 
+    if all_timesteps:
+        history=[]
+
     u=Function(V)
     t=T
 
     while t>dt:
-        print(t)
         solve(a==L,u,bc)
+        if all_timesteps:
+            history.append([u.copy(),project(grad(u),gradV)])
         IV.assign(u) #update old state
         t-=dt
-        print(len(u.vector()))
         if verbose:
+            print("Time: ", t)
+            print("DoF: ", len(u.vector()))
             for p in points:
                 print(p,": ", u(p[0],p[1]))
-    return u
+
+    if all_timesteps:
+        return history
+    else:
+        return u
