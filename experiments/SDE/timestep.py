@@ -11,23 +11,29 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.getcwd() + "/src/"))
 
-from SDE import SDE_solve
+from SDE_simulator import SDE_path
 
-n = 10
+n = 5
 steps = 2**np.arange(0,n)
 N0 = 20
 points = np.array([[-1.2,1.1],[-2.5,2.5],[-3.0,4.0]],dtype=float)
+
+solver = SDE_path()
 
 mu = np.zeros((len(steps),len(points)))
 
 rng = np.random.default_rng(seed=55)
 reps = 10000
 path = rng.normal(loc=0.0,scale=1.0,size=(reps,steps[-1]*N0,2))
+#path = rng.normal(loc=0.0,scale=1.0,size=(reps,N0,2))
+
 for i,s in enumerate(steps):
     print(s)
     for j,p in enumerate(points):
-        stop = SDE_solve(p,path[:,::s,:])
-        mu[n-i-1,j]= len(stop[stop>=0])/reps
+        tmp=path[:,::s,:]
+        print(tmp.shape)
+        ret = solver.solve(p,tmp,N=tmp.shape[1])
+        mu[n-i-1,j] = np.mean(ret)
 
 print(mu)
 fig,ax=plt.subplots()

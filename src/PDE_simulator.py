@@ -12,7 +12,7 @@ class PDE(Simulator):
         domain = outer
         return generate_mesh(domain,resolution)
     
-    def solve(self,T=10, N=1000, resolution=100, cutoff=20.0, points=np.array([[1.2,1.1],[2.5,2.5],[3.0,4.0]]), verbose=True, all_timesteps=False):
+    def solve(self,T=10, N=1000, resolution=100, cutoff=20.0, points=np.array([[1.2,1.1],[2.5,2.5],[3.0,4.0]]), verbose=True, all_timesteps=False, return_grad=False):
         dt = T/N
 
         #Build mesh and function spaces
@@ -49,7 +49,10 @@ class PDE(Simulator):
             solve(a==L,u,bc,solver_parameters={'linear_solver': 'gmres',
                                                'preconditioner': 'ilu'})
             if all_timesteps:
-                history.append([u.copy(),project(grad(u),gradV)])
+                if not return_grad:
+                    history.append([u.copy(),0])#project(grad(u),gradV)])
+                else:
+                    history.append([u.copy(),project(grad(u),gradV)])
             IV.assign(u) #update old state
             if verbose:
                 print("Time: ", t)

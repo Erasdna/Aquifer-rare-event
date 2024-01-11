@@ -1,6 +1,6 @@
 import numpy as np
 from tqdm import tqdm
-from PDE import PDE_solve
+from src.old.PDE import PDE_solve
 import matplotlib.pyplot as plt
 
 def SDE_solve_phi(init,seed,reps=10000,sigma=0.25,R=1.0,T=10,N=100,Q=-7.0,resolution=100,cutoff=20.0):

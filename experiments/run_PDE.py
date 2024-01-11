@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.abspath(os.getcwd() + "/src/"))
 
-from PDE import PDE_solve
+from PDE_simulator import PDE
 from dolfin.common.plotting import plot
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,13 +15,13 @@ points = np.array([
     [3.0,4.0],
     [-1.2,1.1],
     [-2.5,2.5],
-    [-3.0,4.0]
+    [-3.0,4.0],
+    [7.0,7.0],
+    [-7.0,7.0]
 ])
-u=PDE_solve(N=100,points=points,dof=200,cutoff=10.0)
-
-ff = lambda x,y: grad(u)(x,y)/(1+u(x,y))
-print(ff(3.0,3.0))
-print(ff(2.5,2.5))
+solver = PDE(sigma=0.25,Q=-7.0)
+u=solver.solve(N=1000,points=points,resolution=300,cutoff=20.0,T=10.0)
+print("DoF: ", len(u.vector()))
 
 plot(u)
 plt.savefig("Figures/PDE_example.png")

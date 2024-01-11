@@ -18,7 +18,7 @@ steps = 2**np.arange(0,n)
 N0 = 10
 
 solver = PDE()
-points = np.array([[-1.2,1.1],[-2.5,2.5],[-3.0,4.0]],dtype=float)
+points = np.array([[1.2,1.1],[2.5,2.5],[3.0,4.0]],dtype=float)
 res = np.zeros((len(steps),len(points)))
 for i,s in enumerate(steps):
     print(s)
