@@ -4,14 +4,14 @@ from PDE_simulator import PDE
 from SDE_simulator import SDE
 
 class PDE_importance(SDE):
-    def solve(self, init, T=10, N=1000, reps=10000, resolution=100, cutoff=20.0,pre_run=None):
+    def solve(self, init, T=10, N=1000, reps=10000, resolution=100, cutoff=20.0,pre_run=None,save_pos=False):
         if pre_run is not None:
             self.importance = pre_run
         else:
             pde_solver = PDE(self.sigma,self.R,self.Q)
             self.importance = pde_solver.solve(T=T,N=N,resolution=resolution,cutoff=cutoff,points=[],all_timesteps=True, return_grad=False)
 
-        return super().solve(init, T, N, reps)
+        return super().solve(init, T, N, reps,save_pos=save_pos)
     
 class dynamic_Q(PDE_importance):
     def phi(self, pos, it):

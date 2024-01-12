@@ -19,11 +19,11 @@ points = np.array([
     [7.0,7.0],
     [-7.0,7.0]
 ])
-solver = PDE(sigma=0.25,Q=-7.0)
-u=solver.solve(N=1000,points=points,resolution=300,cutoff=20.0,T=10.0)
+solver = PDE()
+u=solver.solve(N=1000,points=points,resolution=300,cutoff=20.0,T=1.0)
 print("DoF: ", len(u.vector()))
 
 plot(u)
-plt.savefig("Figures/PDE_example.png")
-plt.savefig("Figures/PDE_example.eps")
+#plt.savefig("Figures/PDE_example.png")
+#plt.savefig("Figures/PDE_example.eps")
 plt.show()

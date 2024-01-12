@@ -10,13 +10,22 @@ class SDE(Simulator):
         self.seed=seed
         self.rng = np.random.default_rng(seed=self.seed)
     
-    def solve(self, init,T=10, N=1000,reps=10000):
+    def solve(self, init,T=10, N=1000,reps=10000, save_pos=False):
         stop = np.zeros(reps)
+        if save_pos:
+            histories=[]
         for it in tqdm(range(reps)):
             pos = init.copy()
-            stop[it],_,_ = self.sim(pos,T,N)
-        
-        return stop
+
+            if save_pos:
+                stop[it],_,_,tmp = self.sim(pos,T,N,save_pos=save_pos)
+                histories.append(tmp)
+            else:
+                stop[it],_,_ = self.sim(pos,T,N)
+        if save_pos:
+            return stop, histories
+        else:   
+            return stop
 
     def flow(self,pos):
         steady = np.array([1.0,0.0])
@@ -32,7 +41,10 @@ class SDE(Simulator):
     def phi(self,pos,it):
         return np.zeros(2)
 
-    def sim(self,pos,T,N, t0=0.0, condition=None):
+    def sim(self,pos,T,N, t0=0.0, condition=None, save_pos=False):
+        if save_pos:
+            history = []
+
         if condition is not None:
             r = condition
         else:
@@ -43,13 +55,21 @@ class SDE(Simulator):
 
         logw = 0
         for i,t in enumerate(np.linspace(t0,T,n)):
+            if save_pos:
+                history.append(pos.copy())
             if np.linalg.norm(pos)<= r or np.linalg.norm(pos)<= self.R:
-                return 1.0*np.exp(logw),t,pos  
+                if save_pos:
+                    return 1.0*np.exp(logw),t,pos, history
+                else:
+                    return 1.0*np.exp(logw),t,pos  
             
             xi, tmp = self.path(pos,N-i-1,dt)
             logw += tmp 
             pos += self.flow(pos)*dt + self.sigma*xi
-        return 0.0,T,pos
+        if save_pos:
+            return 0.0,T,pos,history
+        else:
+            return 0.0,T,pos
 
 class SDE_path(SDE):
     def solve(self, init, preloaded_path, T=10, N=1000, reps=10000):

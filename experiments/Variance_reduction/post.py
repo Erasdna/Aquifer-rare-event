@@ -49,9 +49,11 @@ fig.savefig("Figures/Variance_reduction/variance.eps",bbox_inches='tight')
 
 fig,ax = plt.subplots()
 ax.semilogx(x[start:],running_std_base[start:],lw=2,linestyle="--",color="k",label="Baseline SDE")
+print(running_std_base[-1])
 #ax.fill_between(x[start:], running_base[start:] + running_CI_base[start:],running_base[start:] - running_CI_base[start:],alpha=0.3)
 for i in range(results.shape[0]):
     ax.semilogx(x[start:],running_std[i,start:],lw=2,label=labs[i])
+    print(running_std[i,-1])
     #ax.fill_between(x[start:], running_mean[i,start:] + running_CI[i,start:],running_mean[i,start:] - running_CI[i,start:],alpha=0.5)
 ax.legend()
 ax.grid()
